@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Games Hub</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <header>
+        <h1>🎮 Games</h1>
+        <p>Choose your favorite game and start playing!</p>
+    </header>
+
+    <main class="games-container">
+        <div class="game-card" data-game="snake">
+            <div class="game-icon">🐍</div>
+            <h2>Snake Game</h2>
+            <p>Classic snake game - eat food and grow!</p>
+            <button class="play-btn" onclick="openGame('snake')">Play Now</button>
+        </div>
+
+        <div class="game-card" data-game="tetris">
+            <div class="game-icon">🧩</div>
+            <h2>Tetris</h2>
+            <p>Stack blocks and clear lines!</p>
+            <button class="play-btn" onclick="openGame('tetris')">Play Now</button>
+        </div>
+
+        <div class="game-card" data-game="tictactoe">
+            <div class="game-icon">⭕</div>
+            <h2>Tic Tac Toe</h2>
+            <p>Classic X's and O's game!</p>
+            <button class="play-btn" onclick="openGame('tictactoe')">Play Now</button>
+        </div>
+
+        <div class="game-card" data-game="memory">
+            <div class="game-icon">🧠</div>
+            <h2>Memory Game</h2>
+            <p>Match pairs and test your memory!</p>
+            <button class="play-btn" onclick="openGame('memory')">Play Now</button>
+        </div>
+
+        <div class="game-card" data-game="pong">
+            <div class="game-icon">🏓</div>
+            <h2>Pong</h2>
+            <p>Classic arcade paddle game!</p>
+            <button class="play-btn" onclick="openGame('pong')">Play Now</button>
+        </div>
+
+        <div class="game-card" data-game="breakout">
+            <div class="game-icon">🧱</div>
+            <h2>Breakout</h2>
+            <p>Break all the bricks with your ball!</p>
+            <button class="play-btn" onclick="openGame('breakout')">Play Now</button>
+        </div>
+
+        <div class="game-card" data-game="ball">
+            <div class="game-icon">⚽</div>
+            <h2>Slope Ball</h2>
+            <p>Navigate the ball down the endless slope!</p>
+            <button class="play-btn" onclick="openGame('ball')">Play Now</button>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Games. From Usman!</p>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

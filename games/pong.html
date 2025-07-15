@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pong - Web Games Hub</title>
+    <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body class="game-page" style="display: block;">
+    <div class="game-header">
+        <a href="../index.html" class="back-btn">← Back to Games</a>
+        <h1>🏓 Pong</h1>
+        <div class="score">Player: <span id="playerScore">0</span> | Computer: <span id="computerScore">0</span></div>
+    </div>
+
+    <div class="game-container">
+        <canvas id="gameCanvas" width="600" height="400"></canvas>
+        <div class="game-controls">
+            <button onclick="startGame()">Start</button>
+            <button onclick="pauseGame()">Pause</button>
+            <button onclick="resetGame()">Reset</button>
+        </div>
+        <div style="text-align: center; margin-top: 1rem;">
+            <p><strong>Controls:</strong> Use W/S keys or mouse to move your paddle</p>
+        </div>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script>
+        class PongGame {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.playerScoreElement = document.getElementById('playerScore');
+                this.computerScoreElement = document.getElementById('computerScore');
+                
+                this.reset();
+                this.setupControls();
+            }
+            
+            reset() {
+                // Paddle properties
+                this.paddleWidth = 10;
+                this.paddleHeight = 60;
+                this.paddleSpeed = 5;
+                
+                // Player paddle (left)
+                this.playerPaddle = {
+                    x: 10,
+                    y: this.canvas.height / 2 - this.paddleHeight / 2,
+                    width: this.paddleWidth,
+                    height: this.paddleHeight,
+                    dy: 0
+                };
+                
+                // Computer paddle (right)
+                this.computerPaddle = {
+                    x: this.canvas.width - this.paddleWidth - 10,
+                    y: this.canvas.height / 2 - this.paddleHeight / 2,
+                    width: this.paddleWidth,
+                    height: this.paddleHeight
+                };
+                
+                // Ball properties
+                this.ball = {
+                    x: this.canvas.width / 2,
+                    y: this.canvas.height / 2,
+                    width: 10,
+                    height: 10,
+                    dx: 4 * (Math.random() > 0.5 ? 1 : -1),
+                    dy: 3 * (Math.random() > 0.5 ? 1 : -1)
+                };
+                
+                this.playerScore = 0;
+                this.computerScore = 0;
+                this.gameRunning = false;
+                this.keys = {};
+                
+                this.updateScore();
+            }
+            
+            setupControls() {
+                document.addEventListener('keydown', (e) => {
+                    this.keys[e.key.toLowerCase()] = true;
+                });
+                
+                document.addEventListener('keyup', (e) => {
+                    this.keys[e.key.toLowerCase()] = false;
+                });
+                
+                // Mouse control
+                this.canvas.addEventListener('mousemove', (e) => {
+                    if (!this.gameRunning) return;
+                    
+                    const rect = this.canvas.getBoundingClientRect();
+                    const mouseY = e.clientY - rect.top;
+                    this.playerPaddle.y = mouseY - this.paddleHeight / 2;
+                    
+                    // Keep paddle within bounds
+                    if (this.playerPaddle.y < 0) this.playerPaddle.y = 0;
+                    if (this.playerPaddle.y > this.canvas.height - this.paddleHeight) {
+                        this.playerPaddle.y = this.canvas.height - this.paddleHeight;
+                    }
+                });
+            }
+            
+            update() {
+                if (!this.gameRunning) return;
+                
+                // Player paddle movement (keyboard)
+                if (this.keys['w'] && this.playerPaddle.y > 0) {
+                    this.playerPaddle.y -= this.paddleSpeed;
+                }
+                if (this.keys['s'] && this.playerPaddle.y < this.canvas.height - this.paddleHeight) {
+                    this.playerPaddle.y += this.paddleSpeed;
+                }
+                
+                // Computer paddle AI
+                const ballCenter = this.ball.y + this.ball.height / 2;
+                const paddleCenter = this.computerPaddle.y + this.paddleHeight / 2;
+                
+                if (ballCenter < paddleCenter - 10) {
+                    this.computerPaddle.y -= this.paddleSpeed * 0.8;
+                } else if (ballCenter > paddleCenter + 10) {
+                    this.computerPaddle.y += this.paddleSpeed * 0.8;
+                }
+                
+                // Keep computer paddle within bounds
+                if (this.computerPaddle.y < 0) this.computerPaddle.y = 0;
+                if (this.computerPaddle.y > this.canvas.height - this.paddleHeight) {
+                    this.computerPaddle.y = this.canvas.height - this.paddleHeight;
+                }
+                
+                // Ball movement
+                this.ball.x += this.ball.dx;
+                this.ball.y += this.ball.dy;
+                
+                // Ball collision with top and bottom walls
+                if (this.ball.y <= 0 || this.ball.y >= this.canvas.height - this.ball.height) {
+                    this.ball.dy = -this.ball.dy;
+                    GameUtils.playSound(440, 100);
+                }
+                
+                // Ball collision with paddles
+                if (this.checkCollision(this.ball, this.playerPaddle)) {
+                    this.ball.dx = Math.abs(this.ball.dx);
+                    this.ball.dy += (this.ball.y - (this.playerPaddle.y + this.paddleHeight / 2)) * 0.1;
+                    GameUtils.playSound(660, 100);
+                }
+                
+                if (this.checkCollision(this.ball, this.computerPaddle)) {
+                    this.ball.dx = -Math.abs(this.ball.dx);
+                    this.ball.dy += (this.ball.y - (this.computerPaddle.y + this.paddleHeight / 2)) * 0.1;
+                    GameUtils.playSound(660, 100);
+                }
+                
+                // Ball goes off screen - scoring
+                if (this.ball.x < 0) {
+                    this.computerScore++;
+                    this.updateScore();
+                    this.resetBall();
+                    GameUtils.playSound(220, 300);
+                }
+                
+                if (this.ball.x > this.canvas.width) {
+                    this.playerScore++;
+                    this.updateScore();
+                    this.resetBall();
+                    GameUtils.playSound(880, 300);
+                }
+                
+                // Check for game end
+                if (this.playerScore >= 5 || this.computerScore >= 5) {
+                    this.gameOver();
+                }
+            }
+            
+            checkCollision(ball, paddle) {
+                return ball.x < paddle.x + paddle.width &&
+                       ball.x + ball.width > paddle.x &&
+                       ball.y < paddle.y + paddle.height &&
+                       ball.y + ball.height > paddle.y;
+            }
+            
+            resetBall() {
+                this.ball.x = this.canvas.width / 2;
+                this.ball.y = this.canvas.height / 2;
+                this.ball.dx = 4 * (Math.random() > 0.5 ? 1 : -1);
+                this.ball.dy = 3 * (Math.random() > 0.5 ? 1 : -1);
+            }
+            
+            draw() {
+                // Clear canvas
+                this.ctx.fillStyle = '#f0f0f0';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Draw center line
+                this.ctx.setLineDash([5, 5]);
+                this.ctx.strokeStyle = '#ccc';
+                this.ctx.lineWidth = 2;
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.canvas.width / 2, 0);
+                this.ctx.lineTo(this.canvas.width / 2, this.canvas.height);
+                this.ctx.stroke();
+                this.ctx.setLineDash([]);
+                
+                // Draw paddles
+                this.ctx.fillStyle = '#667eea';
+                this.ctx.fillRect(this.playerPaddle.x, this.playerPaddle.y, this.playerPaddle.width, this.playerPaddle.height);
+                this.ctx.fillRect(this.computerPaddle.x, this.computerPaddle.y, this.computerPaddle.width, this.computerPaddle.height);
+                
+                // Draw ball
+                this.ctx.fillStyle = '#ff6b6b';
+                this.ctx.fillRect(this.ball.x, this.ball.y, this.ball.width, this.ball.height);
+                
+                // Draw game status
+                if (!this.gameRunning) {
+                    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                    
+                    this.ctx.fillStyle = 'white';
+                    this.ctx.font = '24px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText('Press Start to Play', this.canvas.width / 2, this.canvas.height / 2);
+                }
+            }
+            
+            gameLoop() {
+                this.update();
+                this.draw();
+            }
+            
+            start() {
+                if (this.gameRunning) return;
+                this.gameRunning = true;
+                this.gameInterval = setInterval(() => this.gameLoop(), 1000 / 60);
+            }
+            
+            pause() {
+                this.gameRunning = false;
+                if (this.gameInterval) {
+                    clearInterval(this.gameInterval);
+                }
+            }
+            
+            gameOver() {
+                this.pause();
+                const winner = this.playerScore >= 5 ? 'Player' : 'Computer';
+                setTimeout(() => {
+                    alert(`${winner} wins!\n\nFinal Score:\nPlayer: ${this.playerScore}\nComputer: ${this.computerScore}`);
+                }, 100);
+            }
+            
+            updateScore() {
+                this.playerScoreElement.textContent = this.playerScore;
+                this.computerScoreElement.textContent = this.computerScore;
+            }
+        }
+        
+        // Initialize game
+        const game = new PongGame();
+        game.draw();
+        
+        // Game control functions
+        function startGame() {
+            game.start();
+        }
+        
+        function pauseGame() {
+            game.pause();
+        }
+        
+        function resetGame() {
+            game.pause();
+            game.reset();
+            game.draw();
+        }
+    </script>
+</body>
+</html>
