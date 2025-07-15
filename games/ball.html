@@ -9,13 +9,13 @@
         .slope-container {
             position: relative;
             width: 100%;
-            height: 600px;
+            height: 700px;
             margin: 0 auto;
             background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             border-radius: 15px;
             overflow: hidden;
-            perspective: 1000px;
-            perspective-origin: 50% 20%;
+            perspective: 1200px;
+            perspective-origin: 50% 40%;
         }
         
         .slope-game {
@@ -23,13 +23,13 @@
             width: 100%;
             height: 100%;
             transform-style: preserve-3d;
-            transform: rotateX(75deg) rotateY(0deg);
+            transform: rotateX(60deg) rotateY(0deg);
         }
         
         .slope-track {
             position: absolute;
             width: 100%;
-            height: 200%;
+            height: 250%;
             background: 
                 linear-gradient(0deg, 
                     rgba(0,255,255,0.1) 0%, 
@@ -49,16 +49,16 @@
                     transparent 102px);
             border-left: 2px solid #00ffff;
             border-right: 2px solid #00ffff;
-            left: 20%;
-            width: 60%;
-            top: -100%;
+            left: 15%;
+            width: 70%;
+            top: -125%;
             z-index: 1;
-            animation: trackMove 8s linear infinite;
+            animation: trackMove 10s linear infinite;
         }
         
         @keyframes trackMove {
             0% { transform: translateZ(0px) translateY(0px); }
-            100% { transform: translateZ(1500px) translateY(100px); }
+            100% { transform: translateZ(1800px) translateY(150px); }
         }
         
         .ball {
@@ -337,11 +337,11 @@
                 // Get container dimensions
                 const containerRect = this.gameArea.getBoundingClientRect();
                 this.containerWidth = containerRect.width || 500;
-                this.containerHeight = containerRect.height || 600;
+                this.containerHeight = containerRect.height || 700;
                 
                 // Slope game positioning - ball starts in center
                 this.ballX = this.containerWidth / 2 - 15; // Center minus half ball width
-                this.ballY = this.containerHeight / 2; // Middle of screen
+                this.ballY = this.containerHeight / 2 + 50; // Slightly lower in the expanded view
                 this.ballZ = 0; // 3D depth
                 this.ballVelX = 0; // Horizontal velocity
                 this.ballVelY = 0; // Vertical velocity (falling)
@@ -356,9 +356,9 @@
                 this.keys = {};
                 this.bounce = 0.7; // Bounce factor for collisions
                 
-                // Track boundaries (like original Slope)
-                this.trackLeft = this.containerWidth * 0.2;
-                this.trackRight = this.containerWidth * 0.8;
+                // Track boundaries (wider track for less squeeze)
+                this.trackLeft = this.containerWidth * 0.15;
+                this.trackRight = this.containerWidth * 0.85;
                 
                 // Clear obstacles and powerups (with safety checks)
                 if (this.obstacles && Array.isArray(this.obstacles)) {
@@ -520,9 +520,9 @@
             
             updateBallPosition() {
                 if (this.ball) {
-                    // Slope-style 3D positioning
-                    const perspective = 800 + this.ballZ;
-                    const scale = Math.max(0.4, perspective / 800);
+                    // Slope-style 3D positioning with better scaling
+                    const perspective = 1000 + this.ballZ;
+                    const scale = Math.max(0.6, perspective / 1000);
                     
                     this.ball.style.left = this.ballX + 'px';
                     this.ball.style.top = this.ballY + 'px';
@@ -602,8 +602,8 @@
                     obstacle.y += this.gameSpeed;
                     obstacle.z += this.gameSpeed;
                     
-                    // 3D perspective scaling
-                    const scale = Math.max(0.2, 1 - obstacle.z / 800);
+                    // 3D perspective scaling with better depth
+                    const scale = Math.max(0.3, 1 - obstacle.z / 1000);
                     obstacle.element.style.top = obstacle.y + 'px';
                     obstacle.element.style.transform = 
                         `translateZ(${obstacle.z}px) scale(${scale})`;
@@ -625,7 +625,7 @@
                     }
                     
                     // Remove obstacles that have passed
-                    if (obstacle.y > this.containerHeight + 100 || obstacle.z > 200) {
+                    if (obstacle.y > this.containerHeight + 100 || obstacle.z > 300) {
                         obstacle.element.remove();
                         this.obstacles.splice(index, 1);
                         this.score += 5; // Small score for survival
@@ -637,8 +637,8 @@
                     powerup.y += this.gameSpeed;
                     powerup.z += this.gameSpeed;
                     
-                    // 3D perspective scaling with pulse
-                    const scale = Math.max(0.2, 1 - powerup.z / 800);
+                    // 3D perspective scaling with pulse and better depth
+                    const scale = Math.max(0.3, 1 - powerup.z / 1000);
                     const pulse = 1 + Math.sin(Date.now() * 0.01) * 0.1;
                     powerup.element.style.top = powerup.y + 'px';
                     powerup.element.style.transform = 
@@ -655,7 +655,7 @@
                     }
                     
                     // Remove powerups that have passed
-                    if (powerup.y > this.containerHeight + 100 || powerup.z > 200) {
+                    if (powerup.y > this.containerHeight + 100 || powerup.z > 300) {
                         powerup.element.remove();
                         this.powerups.splice(index, 1);
                     }
