@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slope Ball - Web Games Hub</title>
+    <title>Ball Game - Web Games Hub</title>
     <link rel="stylesheet" href="../styles/main.css">
     <style>
         .slope-container {
@@ -14,22 +14,18 @@
             background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             border-radius: 15px;
             overflow: hidden;
-            perspective: 1200px;
-            perspective-origin: 50% 40%;
         }
         
         .slope-game {
             position: relative;
             width: 100%;
             height: 100%;
-            transform-style: preserve-3d;
-            transform: rotateX(60deg) rotateY(0deg);
         }
         
         .slope-track {
             position: absolute;
-            width: 100%;
-            height: 250%;
+            width: 70%;
+            height: 100%;
             background: 
                 linear-gradient(0deg, 
                     rgba(0,255,255,0.1) 0%, 
@@ -50,15 +46,14 @@
             border-left: 2px solid #00ffff;
             border-right: 2px solid #00ffff;
             left: 15%;
-            width: 70%;
-            top: -125%;
+            top: 0;
             z-index: 1;
             animation: trackMove 10s linear infinite;
         }
         
         @keyframes trackMove {
-            0% { transform: translateZ(0px) translateY(0px); }
-            100% { transform: translateZ(1800px) translateY(150px); }
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(150px); }
         }
         
         .ball {
@@ -72,13 +67,12 @@
                 inset -8px -8px 15px rgba(0,0,0,0.4),
                 inset 6px 6px 12px rgba(255,255,255,0.3);
             z-index: 100;
-            transform-style: preserve-3d;
             animation: ballRoll 0.5s linear infinite;
         }
         
         @keyframes ballRoll {
-            0% { transform: rotateY(0deg) rotateX(0deg); }
-            100% { transform: rotateY(360deg) rotateX(360deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
         .obstacle {
@@ -92,7 +86,6 @@
                 inset -5px -5px 10px rgba(0,0,0,0.5),
                 inset 3px 3px 8px rgba(255,150,150,0.4);
             z-index: 50;
-            transform-style: preserve-3d;
         }
         
         .wall {
@@ -104,7 +97,6 @@
                 0 0 15px rgba(255, 0, 0, 0.5),
                 inset -2px 0 4px rgba(0,0,0,0.3);
             z-index: 50;
-            transform-style: preserve-3d;
         }
         
         .speed-boost {
@@ -119,38 +111,21 @@
                 inset 2px 2px 4px rgba(255,255,255,0.4);
             animation: powerupSpin 1s linear infinite;
             z-index: 50;
-            transform-style: preserve-3d;
         }
         
         @keyframes powerupSpin {
             0% { 
-                transform: rotateY(0deg) rotateZ(0deg) scale(1);
+                transform: rotate(0deg) scale(1);
                 box-shadow: 0 0 25px rgba(255, 255, 0, 1), inset -3px -3px 6px rgba(0,0,0,0.2), inset 2px 2px 4px rgba(255,255,255,0.4);
             }
             50% { 
-                transform: rotateY(180deg) rotateZ(180deg) scale(1.2);
+                transform: rotate(180deg) scale(1.2);
                 box-shadow: 0 0 35px rgba(255, 255, 0, 1.5), inset -3px -3px 6px rgba(0,0,0,0.2), inset 2px 2px 4px rgba(255,255,255,0.4);
             }
             100% { 
-                transform: rotateY(360deg) rotateZ(360deg) scale(1);
+                transform: rotate(360deg) scale(1);
                 box-shadow: 0 0 25px rgba(255, 255, 0, 1), inset -3px -3px 6px rgba(0,0,0,0.2), inset 2px 2px 4px rgba(255,255,255,0.4);
             }
-        }
-        
-        .tunnel-wall {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(ellipse at center, 
-                    transparent 25%, 
-                    rgba(0,100,200,0.1) 40%, 
-                    rgba(0,50,150,0.3) 60%, 
-                    rgba(0,20,100,0.6) 80%, 
-                    rgba(0,10,50,0.8) 100%);
-            border-radius: 50%;
-            transform: rotateX(90deg) translateZ(-300px);
-            z-index: 0;
         }
         
         .particle {
@@ -166,13 +141,13 @@
         
         @keyframes particleMove {
             0% { 
-                transform: translateZ(-500px) translateY(0px);
+                transform: translateY(-100px);
                 opacity: 0;
             }
             10% { opacity: 1; }
             90% { opacity: 1; }
             100% { 
-                transform: translateZ(200px) translateY(-100px);
+                transform: translateY(800px);
                 opacity: 0;
             }
         }
@@ -256,22 +231,21 @@
 <body class="game-page" style="display: block;">
     <div class="game-header">
         <a href="../index.html" class="back-btn">← Back to Games</a>
-        <h1>⚽ Slope Ball</h1>
+        <h1>⚽ Ball Game</h1>
     </div>
 
     <div class="game-container">
         <div class="slope-container">
             <div class="slope-game" id="gameArea">
-                <div class="tunnel-wall"></div>
                 <div class="slope-track"></div>
                 <div class="speed-lines" id="speedLines"></div>
                 <div class="ball" id="ball"></div>
                 
                 <div class="game-overlay" id="gameOverlay">
-                    <h2>🎮 Slope Ball</h2>
-                    <p>Roll down the endless slope at increasing speed!</p>
-                    <p>Use A/D or ←/→ to steer • Avoid red obstacles • Collect yellow boosts</p>
-                    <p><strong>Don't fall off the track!</strong></p>
+                    <h2>🎮 Ball Game</h2>
+                    <p>Navigate the ball through obstacles falling from above!</p>
+                    <p>Use A/D or ←/→ to move • SPACE or TAP to jump • Avoid red obstacles</p>
+                    <p><strong>Stay on the track and survive as long as possible!</strong></p>
                     <button onclick="startGame()" style="margin-top: 1rem; padding: 10px 20px; font-size: 1rem; background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; border-radius: 5px; cursor: pointer;">Start Game</button>
                 </div>
                 
@@ -282,9 +256,9 @@
                 </div>
                 
                 <div class="controls-info">
-                    <strong>Slope Controls:</strong><br>
-                    A/D or ←/→ to steer the ball<br>
-                    Stay on track and avoid obstacles!
+                    <strong>Ball Game Controls:</strong><br>
+                    A/D or ←/→ to move left/right<br>
+                    SPACE or TAP to jump • Avoid obstacles!
                 </div>
             </div>
         </div>
@@ -300,7 +274,7 @@
     <script>
         class SlopeGame {
             constructor() {
-                console.log('Initializing 3D SlopeGame...');
+                console.log('Initializing 2D SlopeGame...');
                 
                 this.gameArea = document.getElementById('gameArea');
                 this.ball = document.getElementById('ball');
@@ -312,11 +286,10 @@
                 
                 // Initialize arrays first
                 this.obstacles = [];
-                this.powerups = [];
                 this.particles = [];
                 
                 // Debug element finding
-                console.log('3D Game elements found:', {
+                console.log('2D Game elements found:', {
                     gameArea: !!this.gameArea,
                     ball: !!this.ball,
                     overlay: !!this.overlay,
@@ -330,7 +303,7 @@
                 this.setupControls();
                 this.createParticles();
                 
-                console.log('3D SlopeGame initialization complete');
+                console.log('2D SlopeGame initialization complete');
             }
             
             reset() {
@@ -339,40 +312,36 @@
                 this.containerWidth = containerRect.width || 500;
                 this.containerHeight = containerRect.height || 700;
                 
-                // Slope game positioning - ball starts in center
+                // 2D game positioning - ball starts in center bottom
                 this.ballX = this.containerWidth / 2 - 15; // Center minus half ball width
-                this.ballY = this.containerHeight / 2 + 50; // Slightly lower in the expanded view
-                this.ballZ = 0; // 3D depth
+                this.ballY = this.containerHeight - 100; // Near bottom of screen
                 this.ballVelX = 0; // Horizontal velocity
-                this.ballVelY = 0; // Vertical velocity (falling)
-                this.ballVelZ = 5; // Forward velocity (always moving forward)
-                this.ballSpeed = 0.3; // Horizontal control sensitivity
-                this.gravity = 0.4; // Constant downward pull
-                this.gameSpeed = 5; // Base forward speed
-                this.acceleration = 0.01; // Speed increases over time
+                this.ballVelY = 0; // Vertical velocity 
+                this.ballSpeed = 0.5; // Horizontal control sensitivity
+                this.gravity = 0.3; // Constant downward pull
+                this.gameSpeed = 3; // Base forward speed (affects obstacle speed)
+                this.acceleration = 0.005; // Speed increases over time
                 this.score = 0;
                 this.distance = 0;
                 this.gameRunning = false;
                 this.keys = {};
                 this.bounce = 0.7; // Bounce factor for collisions
+                this.onGround = false;
+                this.jumpPower = -12; // Jump strength
                 
                 // Track boundaries (wider track for less squeeze)
                 this.trackLeft = this.containerWidth * 0.15;
                 this.trackRight = this.containerWidth * 0.85;
+                this.groundLevel = this.containerHeight - 50; // Ground level for ball
                 
-                // Clear obstacles and powerups (with safety checks)
+                // Clear obstacles (with safety checks)
                 if (this.obstacles && Array.isArray(this.obstacles)) {
                     this.obstacles.forEach(obstacle => obstacle.element && obstacle.element.remove());
                     this.obstacles = [];
                 }
-                if (this.powerups && Array.isArray(this.powerups)) {
-                    this.powerups.forEach(powerup => powerup.element && powerup.element.remove());
-                    this.powerups = [];
-                }
                 
                 // Initialize arrays if they don't exist
                 if (!this.obstacles) this.obstacles = [];
-                if (!this.powerups) this.powerups = [];
                 
                 this.updateBallPosition();
                 this.updateHUD();
@@ -417,6 +386,9 @@
             setupControls() {
                 document.addEventListener('keydown', (e) => {
                     this.keys[e.key.toLowerCase()] = true;
+                    if (e.key === ' ' && this.gameRunning) {
+                        this.jump();
+                    }
                     e.preventDefault(); // Prevent page scroll
                 });
                 
@@ -455,6 +427,7 @@
                 this.gameArea.addEventListener('touchend', (e) => {
                     this.keys['a'] = false;
                     this.keys['d'] = false;
+                    this.jump(); // Tap to jump
                     e.preventDefault();
                 });
             }
@@ -478,60 +451,23 @@
                     
                     obstacle.style.left = (minX + Math.random() * (maxX - minX)) + 'px';
                     obstacle.style.top = '-100px'; // Start above screen
-                    obstacle.style.transform = 'translateZ(-500px) rotateY(0deg)';
                     this.gameArea.appendChild(obstacle);
                     
                     this.obstacles.push({
                         element: obstacle,
                         x: parseInt(obstacle.style.left),
                         y: -100,
-                        z: -500,
                         width: 40,
-                        height: 40,
-                        rotation: 0
-                    });
-                }
-            }
-            
-            spawnPowerup() {
-                if (Math.random() < 0.005) {
-                    const powerup = document.createElement('div');
-                    powerup.className = 'speed-boost';
-                    
-                    // Spawn powerups within track boundaries
-                    const minX = this.trackLeft;
-                    const maxX = this.trackRight - 28;
-                    
-                    powerup.style.left = (minX + Math.random() * (maxX - minX)) + 'px';
-                    powerup.style.top = '-100px';
-                    powerup.style.transform = 'translateZ(-500px)';
-                    this.gameArea.appendChild(powerup);
-                    
-                    this.powerups.push({
-                        element: powerup,
-                        x: parseInt(powerup.style.left),
-                        y: -100,
-                        z: -500,
-                        width: 28,
-                        height: 28
+                        height: 40
                     });
                 }
             }
             
             updateBallPosition() {
                 if (this.ball) {
-                    // Slope-style 3D positioning with better scaling
-                    const perspective = 1000 + this.ballZ;
-                    const scale = Math.max(0.6, perspective / 1000);
-                    
+                    // Simple 2D positioning
                     this.ball.style.left = this.ballX + 'px';
                     this.ball.style.top = this.ballY + 'px';
-                    this.ball.style.transform = `
-                        translateZ(${this.ballZ}px) 
-                        scale(${scale})
-                        rotateY(${this.ballVelX * 10}deg)
-                        rotateX(${this.ballVelY * 5}deg)
-                    `;
                     
                     // Update ball roll animation speed based on velocity
                     const rollSpeed = Math.max(0.1, 1 / (Math.abs(this.ballVelX) + Math.abs(this.ballVelY) + 1));
@@ -551,9 +487,7 @@
             update() {
                 if (!this.gameRunning) return;
                 
-                // Slope-style movement: ball is always moving forward and falling
-                
-                // Horizontal movement (A/D keys)
+                // 2D movement: horizontal movement with A/D keys
                 if (this.keys['a'] || this.keys['arrowleft']) {
                     this.ballVelX -= this.ballSpeed;
                 }
@@ -562,18 +496,14 @@
                 }
                 
                 // Apply air resistance to horizontal movement
-                this.ballVelX *= 0.98;
+                this.ballVelX *= 0.95;
                 
-                // Constant gravity (ball always falls)
+                // Apply gravity (ball always falls)
                 this.ballVelY += this.gravity;
-                
-                // Constant forward movement (like Slope)
-                this.ballVelZ = this.gameSpeed;
                 
                 // Update ball position
                 this.ballX += this.ballVelX;
                 this.ballY += this.ballVelY;
-                this.ballZ += this.ballVelZ;
                 
                 // Track boundary collision (walls)
                 if (this.ballX <= this.trackLeft) {
@@ -587,86 +517,58 @@
                     GameUtils.playSound(440, 100);
                 }
                 
+                // Ground collision
+                if (this.ballY >= this.groundLevel) {
+                    this.ballY = this.groundLevel;
+                    if (this.ballVelY > 0) {
+                        this.ballVelY = -this.ballVelY * 0.6; // Bounce with damping
+                        if (Math.abs(this.ballVelY) < 1) {
+                            this.ballVelY = 0;
+                            this.onGround = true;
+                        }
+                    }
+                } else {
+                    this.onGround = false;
+                }
+                
                 // Game over if ball falls too far
                 if (this.ballY > this.containerHeight + 100) {
                     this.gameOver();
                     return;
                 }
                 
-                // Spawn obstacles and powerups
+                // Spawn obstacles
                 this.spawnObstacle();
-                this.spawnPowerup();
                 
-                // Update obstacles with Slope-style movement
+                // Update obstacles with simple 2D movement
                 this.obstacles.forEach((obstacle, index) => {
                     obstacle.y += this.gameSpeed;
-                    obstacle.z += this.gameSpeed;
-                    
-                    // 3D perspective scaling with better depth
-                    const scale = Math.max(0.3, 1 - obstacle.z / 1000);
                     obstacle.element.style.top = obstacle.y + 'px';
-                    obstacle.element.style.transform = 
-                        `translateZ(${obstacle.z}px) scale(${scale})`;
                     
                     // Check collision with ball
                     if (this.checkCollision({x: this.ballX, y: this.ballY}, obstacle)) {
-                        // Slope-style collision: bounce and lose speed
-                        this.ballVelX *= -0.8;
-                        this.ballVelY = -8; // Bounce up
-                        this.gameSpeed *= 0.7; // Slow down significantly
-                        GameUtils.playSound(220, 300);
-                        
-                        // Remove the obstacle
-                        obstacle.element.remove();
-                        this.obstacles.splice(index, 1);
-                        
-                        // Don't end game immediately, just penalize
+                        // Game over when hitting red obstacle
+                        GameUtils.playSound(220, 500);
+                        this.gameOver();
                         return;
                     }
                     
                     // Remove obstacles that have passed
-                    if (obstacle.y > this.containerHeight + 100 || obstacle.z > 300) {
+                    if (obstacle.y > this.containerHeight + 100) {
                         obstacle.element.remove();
                         this.obstacles.splice(index, 1);
                         this.score += 5; // Small score for survival
-                    }
-                });
-                
-                // Update powerups
-                this.powerups.forEach((powerup, index) => {
-                    powerup.y += this.gameSpeed;
-                    powerup.z += this.gameSpeed;
-                    
-                    // 3D perspective scaling with pulse and better depth
-                    const scale = Math.max(0.3, 1 - powerup.z / 1000);
-                    const pulse = 1 + Math.sin(Date.now() * 0.01) * 0.1;
-                    powerup.element.style.top = powerup.y + 'px';
-                    powerup.element.style.transform = 
-                        `translateZ(${powerup.z}px) scale(${scale * pulse})`;
-                    
-                    // Check collision with ball
-                    if (this.checkCollision({x: this.ballX, y: this.ballY}, powerup)) {
-                        powerup.element.remove();
-                        this.powerups.splice(index, 1);
-                        this.gameSpeed = Math.min(this.gameSpeed * 1.2, 15); // Speed boost with cap
-                        this.score += 50;
-                        GameUtils.playSound(880, 200);
-                        return;
-                    }
-                    
-                    // Remove powerups that have passed
-                    if (powerup.y > this.containerHeight + 100 || powerup.z > 300) {
-                        powerup.element.remove();
-                        this.powerups.splice(index, 1);
+                        this.gameSpeed += 0.2; // Increase speed by 0.2x for each obstacle passed
+                        GameUtils.playSound(550, 100); // Success sound for passing obstacle
                     }
                 });
                 
                 // Update speed lines and particles
                 this.updateSpeedLines();
                 
-                // Gradual acceleration (like Slope)
+                // Gradual acceleration
                 this.gameSpeed += this.acceleration;
-                this.gameSpeed = Math.min(this.gameSpeed, 12); // Speed cap
+                this.gameSpeed = Math.min(this.gameSpeed, 10); // Speed cap
                 this.distance += this.gameSpeed * 0.1;
                 this.score += Math.floor(this.gameSpeed * 0.1); // Distance-based scoring
                 
@@ -777,9 +679,9 @@
                     game.reset();
                     game.overlay.classList.remove('hidden');
                     game.overlay.innerHTML = `
-                        <h2>Slope Ball</h2>
-                        <p>Navigate the ball down the endless slope!</p>
-                        <p>Avoid red obstacles and collect yellow speed boosts</p>
+                        <h2>Ball Game</h2>
+                        <p>Navigate the ball and avoid falling obstacles!</p>
+                        <p>Use A/D to move and SPACE to jump</p>
                         <button onclick="startGame()" style="margin-top: 1rem; padding: 10px 20px; font-size: 1rem;">Start Game</button>
                     `;
                 } else {
